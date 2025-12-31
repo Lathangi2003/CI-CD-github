@@ -29,5 +29,5 @@ jobs:
           sudo cp "$WAR_NAME" "$TOMCAT_WEBAPPS"
  
       - name: Restart Tomcat
-        run: sudo systemctl restart tomcat91~name: Build and Deploy to Tomcat 9
+        run: sudo systemctl restart tomcat9
  
