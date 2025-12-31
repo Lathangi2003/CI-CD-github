@@ -25,16 +25,23 @@ jobs:
         run: ./build.sh
 
       - name: Find WAR and rename
+        shell: bash
         run: |
+          set -euo pipefail
           WAR_PATH=$(find . -type f -name '*.war' | head -n 1)
           if [ -z "$WAR_PATH" ]; then
             echo "WAR file not found!"
             exit 1
           fi
-          cp "$WAR_PATH" ${WAR_NAME}
 
-      - name: Deploy to Tomcat
-        run: |
-          sudo rm -rf ${TOMCAT_WEBAPPS}/*
-          sudo cp ${WAR_NAME} ${TOMCAT_WEBAPPS}/
-          sudo systemctl restart ${TOMCAT_SERVICE}
+          mkdir -p deploy
+          BASENAME=$(basename "$WAR_PATH")
+
+          if [ "$BASENAME" = "ROOT.war" ]; then
+            # Already named correctly; just place it under deploy/
+            cp "$WAR_PATH" "deploy/ROOT.war"
+          else
+            # Rename to ROOT.war for root-context deployment
+            cp "$WAR_PATH" "deploy/ROOT.war"
+          fi
+
